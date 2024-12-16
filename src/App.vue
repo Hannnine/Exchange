@@ -244,23 +244,25 @@ function renderChart() {
     }
   }
 
-  const dates = historicalRates.value.map((item) => item.date);
-  const values = historicalRates.value.map((item) => item.rate);
+  const rates = historicalRates.value;
+  const dates = rates.map((item) => item.date); // 横坐标
+  const values = rates.map((item) => item.rate); // 纵坐标
 
-  if (!dates.length || !values.length) {
-    console.error("No data available for chart rendering.");
-    chartInstance.clear(); // 清空图表，防止显示错误内容
+  if (values.length === 0) {
+    console.error("No data available for rendering chart.");
     return;
   }
 
-  // 确保横轴范围更新到选定的日期
-  const selectedDateIndex = dates.indexOf(selectedDate.value);
-  const visibleDates =
-    selectedDateIndex >= 0 ? dates.slice(0, selectedDateIndex + 1) : dates;
+  // 获取汇率的最小值和最大值
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+
+  // 动态调整纵轴范围
+  const rangePadding = (maxValue - minValue) * 0.2 || 0.01; // 确保有额外的空间，即使波动很小
 
   chartInstance.setOption({
     title: {
-      text: `Exchange Rate (${fromCurrency.value} to ${toCurrency.value})`,
+      text: `Exchange Rate (${fromCurrency.value} to ${toCurrency.value} - ${timeRange.value})`,
       left: "center",
       textStyle: { fontSize: 16, fontWeight: "bold" },
     },
@@ -269,14 +271,16 @@ function renderChart() {
     xAxis: {
       type: "category",
       boundaryGap: false,
-      data: visibleDates, // 横坐标更新为选定日期范围内的数据
+      data: dates,
       axisLabel: {
-        rotate: 45, // 避免日期标签重叠
+        rotate: 45,
         formatter: (value) => value.split("-").slice(1).join("/"), // 格式化日期为 MM/DD
       },
     },
     yAxis: {
       type: "value",
+      min: minValue - rangePadding, // 在最小值基础上减去额外范围
+      max: maxValue + rangePadding, // 在最大值基础上增加额外范围
       axisLine: { show: false },
       axisTick: { show: false },
       splitLine: { lineStyle: { type: "dashed", color: "#e0e0e0" } },
@@ -286,9 +290,10 @@ function renderChart() {
         name: "Rate",
         type: "line",
         smooth: true,
-        data: values.slice(0, visibleDates.length), // 数据范围与横坐标一致
+        data: values,
         itemStyle: { color: "#007bff" },
         areaStyle: { color: "rgba(0, 123, 255, 0.2)" },
+        lineStyle: { width: 2 },
       },
     ],
   });
