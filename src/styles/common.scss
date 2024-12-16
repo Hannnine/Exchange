@@ -1,0 +1,151 @@
+@import './variables.scss';
+@import '@/assets/fonts/fonts.scss';
+// 超大标题样式
+.super-headline {
+  font-family: 'Source Han Sans CN';
+  font-size: 0.48rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 0.36rem; /* 75% */
+}
+
+.mid-headline {
+  font-family: 'Source Han Sans CN';
+  font-size: 0.4rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 0.36rem; /* 90% */
+}
+
+// 大标题样式
+.headline {
+  color: $font-black-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.32rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+// 主标题样式
+.main-headline {
+  color: $font-light-black-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.24rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+// 小标题样式
+.sub-headline {
+  color: #000;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.18rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 0.4rem; /* 222.222% */
+}
+
+// 内容样式
+.content {
+  color: $font-light-black-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.18rem;
+  font-style: normal;
+  font-weight: 500;
+}
+
+//英文内容样式
+.content-eng {
+  color: rgba(39, 41, 55, 0.75);
+  font-family: 'Inter';
+  font-size: 0.18rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 0.3rem;
+}
+
+// 大正文样式
+.body {
+  color: $font-light-black-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.16rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+// 小正文样式
+.main-body {
+  color: $font-deep-grey-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.14rem;
+  font-style: normal;
+  font-weight: 400;
+}
+
+// 辅助文本样式
+.auxiliary-text {
+  color: $font-light-grey-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.12rem;
+  font-style: normal;
+  font-weight: 400;
+}
+
+// 辅助文本H5
+.auxiliary-text-h5 {
+  color: $font-light-grey-color;
+  font-family: 'D-DIN-PRO';
+  font-size: 0.12rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 0.24rem; /* 200% */
+}
+
+// 阴影样式
+.shadow-20 {
+  filter: drop-shadow(0px 00.08rem 0.2rem rgba(0, 56, 186, 0.16));
+}
+
+// 按钮样式
+.btn {
+  border: none;
+  color: $btn-text-color;
+  background: $primary-btn-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.16rem;
+  border-radius: $btn-border-radius;
+  font-style: normal;
+  font-weight: 400;
+  display: inline-flex;
+  padding: 0.16rem 0.24rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.08rem;
+  box-shadow: $shadow-20;
+}
+// 按钮悬浮样式
+.btn:hover {
+  background: $btn-hover-color;
+}
+
+// 导航栏按钮样式
+.nav-btn {
+  border: none;
+  color: $nav-btn-text-color;
+  background: $nav-btn-color;
+  font-family: 'Source Han Sans CN';
+  font-size: 0.16rem;
+  border-radius: $btn-border-radius;
+  font-style: normal;
+  font-weight: 400;
+  display: inline-flex;
+  padding: 0.08rem 0.24rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.08rem;
+}
+// 导航栏按钮悬浮样式
+.nav-btn:hover {
+  color: $nav-btn-hover-text-color;
+  background: $nav-btn-hover-color;
+}

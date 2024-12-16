@@ -1,0 +1,24 @@
+html,
+body,
+#app {
+  height: 100%;
+  width: 100%;
+  /* width: 100vw; */
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+p,
+ul,
+button {
+  margin: 0;
+  padding: 0;
+}
+button {
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+li {
+  list-style-type: none;
+}
