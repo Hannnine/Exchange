@@ -12,7 +12,7 @@ BASE_URL = "https://v6.exchangerate-api.com/v6"
 CURRENCIES = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CNY", "INR"]
 
 
-# 实时汇率接口
+# latest rate interface
 @app.route('/rates', methods=['GET'])
 def get_rates():
     base_currency = request.args.get('base', 'USD')
@@ -32,18 +32,17 @@ def get_rates():
         return jsonify({"status": "error", "error": str(e)}), 500
 
 
-# 历史汇率接口
+# history rate interface
 @app.route('/history', methods=['GET'])
 def get_history():
     base_currency = request.args.get('base', 'USD')
     target_currency = request.args.get('target', 'EUR')
     period = request.args.get('period', '1M')
 
-    # 参数校验
     if base_currency not in CURRENCIES or target_currency not in CURRENCIES:
         return jsonify({"status": "error", "error": "Invalid currency"}), 400
 
-    # 确定时间范围
+    # Range
     end_date = datetime.now()
     if period == "WEEK":
         start_date = end_date - timedelta(weeks=1)
@@ -52,14 +51,11 @@ def get_history():
     elif period == "YEAR":
         start_date = end_date - timedelta(days=365)
     else:
-        # 如果 period 传入的是无效值，返回 400 错误
         return jsonify({"status": "error", "error": "Invalid period value"}), 400
 
-    # 模拟历史数据
     history_data = []
     current_date = start_date
     while current_date <= end_date:
-        # 模拟汇率波动
         simulated_rate = round(1.1 + random.uniform(-0.05, 0.05), 4)
         history_data.append({
             "date": current_date.strftime("%Y-%m-%d"),
@@ -75,7 +71,6 @@ def get_history():
     })
 
 
-# 监控列表支持接口
 @app.route('/watchlist', methods=['POST'])
 def get_watchlist_rates():
     request_data = request.get_json()
@@ -98,7 +93,6 @@ def get_watchlist_rates():
             continue
 
         try:
-            # 模拟返回实时汇率
             simulated_rate = round(1.1 + random.uniform(-0.05, 0.05), 4)
             response_data.append({
                 "baseCurrency": base_currency,
