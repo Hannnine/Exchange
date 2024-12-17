@@ -52,8 +52,12 @@
               />
             </div>
           </div>
+          <div class="search-button">
+            <button @click="searchClick">Search</button>
+          </div>
           <p class="last-updated">Last updated: {{ lastUpdated }}</p>
         </div>
+
         <!-- Chart -->
         <div class="chart-box">
           <div class="time-range-buttons">
@@ -126,12 +130,12 @@
             </div>
 
             <!-- 删除按钮 -->
-            <button @click="removeFromWatchlist(index)">Remove</button>
+            <button @click="removeWatchlistItem(index)">Remove</button>
           </div>
 
           <!-- 添加新条目 -->
           <div>
-            <button @click="addNewWatchlistItem">Add New</button>
+            <button @click="addWatchlistItem">Add New</button>
           </div>
         </div>
       </div>
@@ -140,7 +144,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, render } from "vue";
 import * as echarts from "echarts";
 
 const API_BASE_URL = "http://127.0.0.1:5000"; // 后端 API 地址
@@ -165,7 +169,9 @@ const latestRates = ref({}); // 实时汇率数据
 const selectedDate = ref(new Date().toISOString().split("T")[0]);
 const lastUpdated = ref("Loading...");
 const timeRange = ref("MONTH"); // 当前时间范围：WEEK, MONTH, YEAR
-const watchlist = ref([{ baseCurrency: "USD", targetCurrency: "SGD" }]); // 监控列表
+const watchlist = ref([
+  { baseCurrency: "USD", targetCurrency: "EUR", rate: null }, // 默认初始值
+]);
 
 let chartInstance = null; // 图表实例
 let refreshInterval = null; // 定时器
@@ -205,7 +211,7 @@ async function fetchLatestRates() {
   const data = await fetchAPI("rates", { base: fromCurrency.value });
   if (data && data.rates) {
     latestRates.value = data.rates;
-    lastUpdated.value = new Date().toISOString();
+    lastUpdated.value = getToday();
     convertCurrency();
   } else {
     alert("Failed to fetch the latest rates. Please try again later.");
@@ -321,6 +327,14 @@ function convertCurrency() {
   toAmount.value = (validAmount * rate).toFixed(2);
 }
 
+// Search按钮
+function searchClick() {
+  convertCurrency();
+  fetchHistoricalRates();
+  fetchLatestRates();
+  renderChart();
+}
+
 // 切换货币
 function switchCurrencies() {
   [fromCurrency.value, toCurrency.value] = [
@@ -339,12 +353,27 @@ function setTimeRange(range) {
 
 // 监控列表：添加新条目
 function addWatchlistItem() {
-  watchlist.value.push({ baseCurrency: "USD", targetCurrency: "SGD" });
+  watchlist.value.push({
+    baseCurrency: "USD",
+    targetCurrency: null,
+    rate: null,
+  });
 }
 
 // 监控列表：移除条目
 function removeWatchlistItem(index) {
   watchlist.value.splice(index, 1);
+}
+
+async function refreshWatchlistRate(index) {
+  const item = watchlist.value[index];
+  const data = await fetchAPI("rates", { base: item.baseCurrency });
+
+  if (data && data.rates) {
+    item.rate = data.rates[item.targetCurrency] || null;
+  } else {
+    item.rate = null; // 请求失败时清空汇率
+  }
 }
 
 // 初始化
@@ -353,6 +382,9 @@ onMounted(() => {
   fetchLatestRates();
   fetchHistoricalRates();
   refreshInterval = setInterval(fetchLatestRates, 60000); // 每分钟刷新一次
+
+  // 初始化监控列表的汇率
+  watchlist.value.forEach((_, index) => refreshWatchlistRate(index));
 });
 
 // 清理
@@ -361,8 +393,8 @@ onBeforeUnmount(() => {
 });
 
 // 监听时间范围变化
-watch(timeRange, () => {
-  fetchHistoricalRates();
+watch(watchlist, (newList) => {
+  newList.forEach((_, index) => refreshWatchlistRate(index));
 });
 </script>
 
@@ -462,6 +494,26 @@ watch(timeRange, () => {
               border: 1px solid #ccc;
               border-radius: 8px;
               box-sizing: border-box;
+            }
+          }
+        }
+
+        .search-button {
+          display: flex;
+          justify-content: center;
+          margin-top: 10px;
+
+          button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: wihite;
+            color: rgb(4, 4, 4);
+
+            &:hover {
+              background-color: #007bff;
+              color: white;
             }
           }
         }
