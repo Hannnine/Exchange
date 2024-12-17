@@ -1,13 +1,16 @@
 <template>
   <div class="header">
-    <p class="headline">Exchange</p>
+    <p class="headline">{{ t("exchange.title") }}</p>
+    <button class="body" @click="changeLocale()">
+      {{ $t("exchange.language") }}
+    </button>
   </div>
   <div id="exhome">
     <div class="container sub-headline">
       <div class="left-container">
         <!-- Converter -->
         <div class="converter-box content">
-          <div class="sub-headline">Converter</div>
+          <div class="sub-headline">{{ t("exchange.converter.c_title") }}</div>
           <div class="currency">
             <div class="currency-selection">
               <div class="currency-box">
@@ -53,9 +56,13 @@
             </div>
           </div>
           <div class="search-button">
-            <button @click="searchClick">Search</button>
+            <button @click="searchClick">
+              {{ t("exchange.converter.c_search") }}
+            </button>
           </div>
-          <p class="last-updated">Last updated: {{ lastUpdated }}</p>
+          <p class="last-updated">
+            {{ t("exchange.converter.c_date") }} {{ lastUpdated }}
+          </p>
         </div>
 
         <!-- Chart -->
@@ -65,19 +72,19 @@
               @click="setTimeRange('WEEK')"
               :class="{ active: timeRange === 'WEEK' }"
             >
-              WEEK
+              <p>{{ t("exchange.chart.b_week") }}</p>
             </button>
             <button
               @click="setTimeRange('MONTH')"
               :class="{ active: timeRange === 'MONTH' }"
             >
-              MONTH
+              <p>{{ t("exchange.chart.b_month") }}</p>
             </button>
             <button
               @click="setTimeRange('YEAR')"
               :class="{ active: timeRange === 'YEAR' }"
             >
-              YEAR
+              <p>{{ t("exchange.chart.b_year") }}</p>
             </button>
           </div>
           <canvas id="historyChart"></canvas>
@@ -87,7 +94,7 @@
       <div class="right-contaienr">
         <!-- Watchlist -->
         <div class="watchlist-box">
-          <h3>Exchange Rate Watchlist</h3>
+          <h3>{{ t("exchange.watchlist.w_title") }}</h3>
           <div
             v-for="(item, index) in watchlist"
             :key="index"
@@ -130,12 +137,16 @@
             </div>
 
             <!-- 删除按钮 -->
-            <button @click="removeWatchlistItem(index)">Remove</button>
+            <button @click="removeWatchlistItem(index)">
+              {{ t("exchange.watchlist.w_remove") }}
+            </button>
           </div>
 
           <!-- 添加新条目 -->
           <div>
-            <button @click="addWatchlistItem">Add New</button>
+            <button @click="addWatchlistItem">
+              {{ t("exchange.watchlist.w_add") }}
+            </button>
           </div>
         </div>
       </div>
@@ -146,7 +157,12 @@
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount, render } from "vue";
 import * as echarts from "echarts";
+import { useI18n } from "vue-i18n";
+import i18n from "@/i18n/index.js";
+import { showSuccessToast } from "vant";
+import "vant/es/toast/style";
 
+const { t, locale } = useI18n();
 const API_BASE_URL = "http://127.0.0.1:5000"; // 后端 API 地址
 
 // 数据状态
@@ -181,6 +197,13 @@ function saveToLocalStorage() {
   localStorage.setItem("fromCurrency", fromCurrency.value);
   localStorage.setItem("toCurrency", toCurrency.value);
   localStorage.setItem("timeRange", timeRange.value);
+}
+
+// 切换语言
+function changeLocale() {
+  locale.value = locale.value === "zh_CN" ? "eng" : "zh_CN";
+  localStorage.setItem("locale", locale.value);
+  showSuccessToast(i18n.global.t("exchange.toast"));
 }
 
 function restoreFromLocalStorage() {
@@ -403,11 +426,28 @@ watch(watchlist, (newList) => {
 @import "@/styles/variables.scss";
 .header {
   width: 13.78rem;
-  height: 0.5rem;
+  height: 0.7rem;
+  display: flex;
   p {
     width: 13.78rem;
     text-align: center;
     margin: 0.1rem 0;
+  }
+  button {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.2rem;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: wihite;
+    color: rgb(4, 4, 4);
+
+    &:hover {
+      background-color: #007bff;
+      color: white;
+    }
   }
 }
 
@@ -416,7 +456,7 @@ watch(watchlist, (newList) => {
   justify-content: center;
   .container {
     width: 13.78rem;
-    height: 6rem;
+    height: 7rem;
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -525,12 +565,18 @@ watch(watchlist, (newList) => {
       }
 
       .chart-box {
-        flex: 3;
+        flex: 2;
         width: 10rem;
         height: 2.5rem;
         #historyChart {
           width: 10rem;
           height: 2.5rem;
+        }
+        p {
+          text-align: center;
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
         }
       }
 
